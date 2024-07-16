@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private float zoomSpeedTouch = .1f;
     [SerializeField] private float zoomSpeedMouse = 1;
     [Space(5)]
     [SerializeField] private float minZoom = 5f;
