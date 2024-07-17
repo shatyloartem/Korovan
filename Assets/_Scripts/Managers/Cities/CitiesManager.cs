@@ -19,8 +19,13 @@ namespace Cities
         {
             Instance = this;
 
+            // Compressing bounds for easier use
+            citiesTilemap.CompressBounds();
+            roadsTilemap.CompressBounds();
+
             _pathfinder = new Pathfinder(roadsTilemap);
 
+            // Getting all cities positions in world coordinates
             citiesPositions = GetCitiesPositions();
         }
 
@@ -28,6 +33,8 @@ namespace Cities
         {
             var path = GetRoute(citiesPositions[0], citiesPositions[1]);
 
+            // Debugging path to console
+            // TODO: Remove after pathfinder class completed
             string res = "";
             foreach (var point in path)
                 res += point + "\n";
@@ -70,14 +77,18 @@ namespace Cities
 
         #region Pathfinding
         
+        /// <summary>
+        /// Used to get route from one point to another using roads
+        /// </summary>
+        /// <param name="startPosition">Starter position in world coordinates</param>
+        /// <param name="targetPosition">Target position in world coordinates</param>
+        /// <returns>Array of path points</returns>
         public Vector2[] GetRoute(Vector2 startPosition, Vector2 targetPosition)
         {
             var from = roadsTilemap.WorldToCell(startPosition);
             var to = roadsTilemap.WorldToCell(targetPosition);
 
-            var cellsPath = _pathfinder.GetRoute(
-                from,
-                to);
+            var cellsPath = _pathfinder.GetRoute(from, to);
 
             var resultPath = new Vector2[cellsPath.Length];
 
