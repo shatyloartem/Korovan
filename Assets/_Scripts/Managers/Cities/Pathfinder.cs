@@ -50,9 +50,9 @@ namespace Cities
             public float GCost;
             public float HCost;
             public float FCost => GCost + HCost;
-            public Node? Parent;
+            public Node Parent;
 
-            public Node(Vector2Int position, float gCost, float hCost, Node? parent)
+            public Node(Vector2Int position, float gCost, float hCost, Node parent)
             {
                 Position = position;
                 GCost = gCost;
