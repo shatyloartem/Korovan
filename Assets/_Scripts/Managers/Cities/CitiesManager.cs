@@ -24,6 +24,17 @@ namespace Cities
             citiesPositions = GetCitiesPositions();
         }
 
+        private void Start()
+        {
+            var path = GetRoute(citiesPositions[0], citiesPositions[1]);
+
+            string res = "";
+            foreach (var point in path)
+                res += point + "\n";
+
+            Debug.Log(res);
+        }
+
         #region Cities
 
         private Vector3[] GetCitiesPositions()
@@ -61,9 +72,19 @@ namespace Cities
         
         public Vector2[] GetRoute(Vector2 startPosition, Vector2 targetPosition)
         {
-            return _pathfinder.GetRoute(
-                roadsTilemap.WorldToCell(startPosition),
-                roadsTilemap.WorldToCell(targetPosition));
+            var from = roadsTilemap.WorldToCell(startPosition);
+            var to = roadsTilemap.WorldToCell(targetPosition);
+
+            var cellsPath = _pathfinder.GetRoute(
+                from,
+                to);
+
+            var resultPath = new Vector2[cellsPath.Length];
+
+            for(int i = 0; i < cellsPath.Length; i++)
+                resultPath[i] = roadsTilemap.CellToWorld((Vector3Int)cellsPath[i]);
+
+            return resultPath;
         }
 
         #endregion
