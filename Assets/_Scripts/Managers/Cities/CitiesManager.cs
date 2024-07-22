@@ -29,19 +29,6 @@ namespace Cities
             citiesPositions = GetCitiesPositions();
         }
 
-        private void Start()
-        {
-            var path = GetRoute(citiesPositions[0], citiesPositions[1]);
-
-            // Debugging path to console
-            // TODO: Remove after pathfinder class completed
-            string res = "";
-            foreach (var point in path)
-                res += point + "\n";
-
-            Debug.Log(res);
-        }
-
         #region Cities
 
         private Vector3[] GetCitiesPositions()
@@ -82,7 +69,7 @@ namespace Cities
         /// </summary>
         /// <param name="startPosition">Starter position in world coordinates</param>
         /// <param name="targetPosition">Target position in world coordinates</param>
-        /// <returns>Array of path points</returns>
+        /// <returns>Array of path points in world coordinates</returns>
         public Vector2[] GetRoute(Vector2 startPosition, Vector2 targetPosition)
         {
             var from = roadsTilemap.WorldToCell(startPosition);
@@ -90,10 +77,13 @@ namespace Cities
 
             var cellsPath = _pathfinder.GetRoute(from, to);
 
+            if(cellsPath == null)
+                return null;
+
             var resultPath = new Vector2[cellsPath.Length];
 
             for(int i = 0; i < cellsPath.Length; i++)
-                resultPath[i] = roadsTilemap.CellToWorld((Vector3Int)cellsPath[i]);
+                resultPath[i] = roadsTilemap.CellToLocalInterpolated((Vector3Int)cellsPath[i]);
 
             return resultPath;
         }
