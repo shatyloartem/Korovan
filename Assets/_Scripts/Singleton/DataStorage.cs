@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DataStorage: MonoBehaviour
 {
-    [SerializeField] private DataStorage Instance;
+    public static DataStorage Instance;
 
     [SerializeField] private PlayerInventory PlayerInventory;
     [SerializeField] private PlayerInventory OponentInventory;
