@@ -6,6 +6,7 @@ namespace Cities
 {
     public class CitiesManager : MonoBehaviour
     {
+        [SerializeField] private Grid grid;
         [SerializeField] private Tilemap citiesTilemap;
         [SerializeField] private Tilemap roadsTilemap;
 
@@ -58,6 +59,28 @@ namespace Cities
             return cityPositions.ToArray();
         }
     
+        public Vector3[] GetTwoRandomCities()
+        {
+            if (citiesPositions.Length < 2)
+            {
+                Debug.LogError("Array must contain at least 2 elements.");
+                return null;
+            }
+
+            // Select a random index for the first value
+            int firstIndex = Random.Range(0, citiesPositions.Length);
+
+            // Select a random index for the second value ensuring it is different from the first index
+            int secondIndex;
+            do
+            {
+                secondIndex = Random.Range(0, citiesPositions.Length);
+            } while (secondIndex == firstIndex);
+
+            // Return the two random distinct values
+            return new Vector3[] { citiesPositions[firstIndex], citiesPositions[secondIndex] };
+        }
+
         public Vector3[] GetCities() => citiesPositions;
 
         #endregion
@@ -83,9 +106,37 @@ namespace Cities
             var resultPath = new Vector2[cellsPath.Length];
 
             for(int i = 0; i < cellsPath.Length; i++)
-                resultPath[i] = roadsTilemap.CellToLocalInterpolated((Vector3Int)cellsPath[i]);
+            {
+                var result = CellToWorld(cellsPath[i]);
+                resultPath[i] = result;
+                Debug.Log(result);
+            }
 
             return resultPath;
+        }
+
+        private Vector2 CellToWorld(Vector2Int cell)
+        {
+            // Debug.Log(ConvertCellPointsToWorld(cell, grid, roadsTilemap));
+
+            return ConvertCellPointsToWorld(cell, grid, roadsTilemap);
+        }
+
+        Vector3 ConvertCellPointsToWorld(Vector2Int cellPoints, Grid grid, Tilemap tilemap)
+        {
+            // Get the origin of the tilemap in world space
+            Vector3 tilemapOrigin = tilemap.transform.position;
+
+            // Get the cell size from the grid
+            Vector3 cellSize = grid.cellSize;
+
+            Vector3 tilemapStart = new Vector3(-3.5f, -8.5f);
+
+            // Calculate the world position for each cell point
+            Vector3Int cellPosition = new Vector3Int(cellPoints.x, cellPoints.y, 0);
+            Vector3 worldPosition = tilemapOrigin + Vector3.Scale(cellPosition, cellSize);
+
+            return worldPosition + tilemapStart;
         }
 
         #endregion

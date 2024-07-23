@@ -131,6 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 19969634}
+  - component: {fileID: 19969635}
   m_Layer: 0
   m_Name: KorovansSpawnerManager
   m_TagString: Untagged
@@ -153,6 +154,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1763105931}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &19969635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19969633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c9e9ff705291f40a5408b19a78858c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  korovanPrefab: {fileID: 8769917397861681684, guid: 9a3c99068e7190c4b995c1e17549d4a2, type: 3}
+  spawnKorovansTimes: {x: 3, y: 10}
 --- !u!1 &45763765
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aff8f6b62125dd41a2df03a5862f69f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 622563082}
   citiesTilemap: {fileID: 550919112}
   roadsTilemap: {fileID: 1148388687}
 --- !u!1 &65136541
@@ -796,7 +812,7 @@ TilemapRenderer:
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
-  m_Mode: 0
+  m_Mode: 1
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
 --- !u!1839735485 &1148388687
