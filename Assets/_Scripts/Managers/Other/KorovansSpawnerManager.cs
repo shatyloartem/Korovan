@@ -20,13 +20,11 @@ namespace Korovans
 
         private async void SpawnKorovans()
         {
-            Debug.Log("Spawning Korovans");
-
             await Task.Delay((int)(Random.Range(spawnKorovansTimes.x, spawnKorovansTimes.y) * 1000));
 
-            var _citiesManager = CitiesManager.Instance;
-            var cities = _citiesManager.GetTwoRandomCities();
-            var path = _citiesManager.GetRoute(cities[0], cities[1]);
+            var citiesManager = CitiesManager.Instance;
+            var cities = citiesManager.GetTwoRandomCities();
+            var path = citiesManager.GetRoute(cities[0], cities[1]);
 
             Instantiate(korovanPrefab).GetComponent<KorovanController>().Initialize(path);
 
