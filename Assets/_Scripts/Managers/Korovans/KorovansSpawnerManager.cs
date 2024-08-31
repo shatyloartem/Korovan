@@ -1,9 +1,9 @@
-using Cities;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Cities;
+using Managers.Cities;
 using UnityEngine;
 
-namespace Korovans
+namespace Managers.Korovans
 {
     public class KorovansSpawnerManager : MonoBehaviour
     {
@@ -22,6 +22,9 @@ namespace Korovans
         {
             await Task.Delay((int)(Random.Range(spawnKorovansTimes.x, spawnKorovansTimes.y) * 1000));
 
+            if(!Application.isPlaying)
+                return;
+            
             var citiesManager = CitiesManager.Instance;
             var cities = citiesManager.GetTwoRandomCities();
             var path = citiesManager.GetRoute(cities[0], cities[1]);

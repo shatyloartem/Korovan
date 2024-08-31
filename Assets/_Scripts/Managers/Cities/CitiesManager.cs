@@ -1,41 +1,43 @@
 using System.Collections.Generic;
+using Cities;
+using SA.EasyConsole;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Cities
+namespace Managers.Cities
 {
     public class CitiesManager : MonoBehaviour
     {
-        [SerializeField] private Grid grid;
-        [SerializeField] private Tilemap citiesTilemap;
-        [SerializeField] private Tilemap roadsTilemap;
+        [SerializeField] private Grid mainGrid;
+        [SerializeField] private Tilemap citiesTileMap;
+        [SerializeField] private Tilemap roadsTileMap;
 
         public static CitiesManager Instance { get; private set; }
 
         private Pathfinder _pathfinder;
 
-        private Vector3[] citiesPositions;
+        private Vector3[] _citiesPositions;
 
         private void Awake()
         {
             Instance = this;
 
             // Compressing bounds for easier use
-            citiesTilemap.CompressBounds();
-            roadsTilemap.CompressBounds();
+            citiesTileMap.CompressBounds();
+            roadsTileMap.CompressBounds();
 
-            _pathfinder = new Pathfinder(roadsTilemap);
+            _pathfinder = new Pathfinder(roadsTileMap);
 
             // Getting all cities positions in world coordinates
-            citiesPositions = GetCitiesPositions();
+            _citiesPositions = GetCitiesPositions();
         }
 
         #region Cities
 
         private Vector3[] GetCitiesPositions()
         {
-            // Bounds of the Tilemap
-            var bounds = citiesTilemap.cellBounds;
+            // Bounds of the TileMap
+            var bounds = citiesTileMap.cellBounds;
 
             var cityPositions = new List<Vector3>();
 
@@ -45,12 +47,12 @@ namespace Cities
                 for (int y = bounds.yMin; y < bounds.yMax; y++)
                 {
                     var tilePosition = new Vector3Int(x, y, 0);
-                    var tile = citiesTilemap.GetTile(tilePosition);
+                    var tile = citiesTileMap.GetTile(tilePosition);
 
                     // Check if the tile is not empty
                     if (tile != null)
                     {
-                        var worldPosition = citiesTilemap.CellToWorld(tilePosition);
+                        var worldPosition = citiesTileMap.CellToWorld(tilePosition);
                         cityPositions.Add(worldPosition);
                     }
                 }
@@ -61,27 +63,27 @@ namespace Cities
     
         public Vector3[] GetTwoRandomCities()
         {
-            if (citiesPositions.Length < 2)
+            if (_citiesPositions.Length < 2)
             {
-                Debug.LogError("Array must contain at least 2 elements.");
+                EasyConsole.LogError("Array must contain at least 2 elements.");
                 return null;
             }
 
             // Select a random index for the first value
-            int firstIndex = Random.Range(0, citiesPositions.Length);
+            int firstIndex = Random.Range(0, _citiesPositions.Length);
 
             // Select a random index for the second value ensuring it is different from the first index
             int secondIndex;
             do
             {
-                secondIndex = Random.Range(0, citiesPositions.Length);
+                secondIndex = Random.Range(0, _citiesPositions.Length);
             } while (secondIndex == firstIndex);
 
             // Return the two random distinct values
-            return new Vector3[] { citiesPositions[firstIndex], citiesPositions[secondIndex] };
+            return new[] { _citiesPositions[firstIndex], _citiesPositions[secondIndex] };
         }
 
-        public Vector3[] GetCities() => citiesPositions;
+        public Vector3[] GetCities() => _citiesPositions;
 
         #endregion
 
@@ -95,8 +97,8 @@ namespace Cities
         /// <returns>Array of path points in world coordinates</returns>
         public Vector2[] GetRoute(Vector2 startPosition, Vector2 targetPosition)
         {
-            var from = roadsTilemap.WorldToCell(startPosition);
-            var to = roadsTilemap.WorldToCell(targetPosition);
+            var from = roadsTileMap.WorldToCell(startPosition);
+            var to = roadsTileMap.WorldToCell(targetPosition);
 
             var cellsPath = _pathfinder.GetRoute(from, to);
 
@@ -109,7 +111,6 @@ namespace Cities
             {
                 var result = CellToWorld(cellsPath[i]);
                 resultPath[i] = result;
-                Debug.Log(result);
             }
 
             return resultPath;
@@ -117,26 +118,26 @@ namespace Cities
 
         private Vector2 CellToWorld(Vector2Int cell)
         {
-            // Debug.Log(ConvertCellPointsToWorld(cell, grid, roadsTilemap));
+            // Debug.Log(ConvertCellPointsToWorld(cell, grid, roadsTileMap));
 
-            return ConvertCellPointsToWorld(cell, grid, roadsTilemap);
+            return ConvertCellPointsToWorld(cell, mainGrid, roadsTileMap);
         }
 
-        Vector3 ConvertCellPointsToWorld(Vector2Int cellPoints, Grid grid, Tilemap tilemap)
+        Vector3 ConvertCellPointsToWorld(Vector2Int cellPoints, Grid grid, Tilemap tileMap)
         {
-            // Get the origin of the tilemap in world space
-            Vector3 tilemapOrigin = tilemap.transform.position;
+            // Get the origin of the tileMap in world space
+            Vector3 tileMapOrigin = tileMap.transform.position;
 
             // Get the cell size from the grid
             Vector3 cellSize = grid.cellSize;
 
-            Vector3 tilemapStart = new Vector3(-3.5f, -8.5f);
+            Vector3 tileMapStart = new Vector3(-3.5f, -8.5f);
 
             // Calculate the world position for each cell point
             Vector3Int cellPosition = new Vector3Int(cellPoints.x, cellPoints.y, 0);
-            Vector3 worldPosition = tilemapOrigin + Vector3.Scale(cellPosition, cellSize);
+            Vector3 worldPosition = tileMapOrigin + Vector3.Scale(cellPosition, cellSize);
 
-            return worldPosition + tilemapStart;
+            return worldPosition + tileMapStart;
         }
 
         #endregion
