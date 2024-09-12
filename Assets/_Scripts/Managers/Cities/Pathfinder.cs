@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,36 +6,37 @@ namespace Cities
 {
     public class Pathfinder
     {
-        private Tilemap roadsTilemap;
+        private Tilemap _roadsTilemap;
 
-        private bool[,] roads;
+        private bool[,] _roads;
     
         public Pathfinder(Tilemap roadsTilemap)
         {
-            this.roadsTilemap = roadsTilemap;
+            _roadsTilemap = roadsTilemap;
 
-            roads = GetRoads();
+            _roads = GetRoads();
         }
 
         public Vector2Int[] GetRoute(Vector3Int from, Vector3Int to)
         {
-            var start = new Vector2Int(from.x - roadsTilemap.cellBounds.xMin, from.y - roadsTilemap.cellBounds.yMin);
-            var finish = new Vector2Int(to.x - roadsTilemap.cellBounds.xMin, to.y - roadsTilemap.cellBounds.yMin);
+            var bounds = _roadsTilemap.cellBounds;
+            var start = (Vector2Int)from - new Vector2Int(bounds.xMin, bounds.yMin);
+            var finish = (Vector2Int)to - new Vector2Int(bounds.xMin, bounds.yMin); 
 
-            return AStarPathfinding.FindPath(roads, start, finish);
+            return AStarPathfinding.FindPath(_roads, start, finish);
         }
 
         private bool[,] GetRoads()
         {
             // Bounds of the tilemap
-            var bounds = roadsTilemap.cellBounds;
+            var bounds = _roadsTilemap.cellBounds;
 
             var result = new bool[bounds.xMax - bounds.xMin, bounds.yMax - bounds.yMin];
 
             for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
                 for (int y = bounds.yMin; y < bounds.yMax; y++)
-                    result[x - bounds.xMin, y - bounds.yMin] = roadsTilemap.GetTile(new Vector3Int(x, y, 0)) != null;
+                    result[x - bounds.xMin, y - bounds.yMin] = _roadsTilemap.GetTile(new Vector3Int(x, y, 0)) != null;
             }
 
             return result;
